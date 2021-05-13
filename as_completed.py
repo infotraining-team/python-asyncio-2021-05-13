@@ -2,33 +2,23 @@ import asyncio
 import socket
 from keyword import kwlist
 
-"""
-check if getaddrinfo returns good value for python keywords
-yield.pl -> free
-with.pl  -> taken
-"""
-
-def get_names():
-    return (kw for kw in kwlist if len(kw) <= 5)
-
-async def test():
+async def probe(domain: str) -> tuple[str, bool]:
     loop = asyncio.get_running_loop()
-    await loop.getaddrinfo("wp.pl", None)
     try:
-        await loop.getaddrinfo("asasdfasfadsfasfsaf.pl", None)
+        await loop.getaddrinfo(domain, None)
     except socket.gaierror:
-        print("domain not exists")
+        return (domain, False)
+    return (domain, True)
 
-async def fun(n):
-    await asyncio.sleep(n)
-    return n
-
-async def main():
-    print(list(get_names()))
-    await test()
-    coros = [fun(n) for n in (2, 1, 4, 0.5)]
+async def main() -> None:
+    names = (kw for kw in kwlist if len(kw) <= 5)
+    domains = (f'{name}.pl'.lower() for name in names)
+    coros = [probe(domain) for domain in domains]
     for coro in asyncio.as_completed(coros):
-        res = await coro
-        print(res)
+        domain, found = await coro
+        mark = '+' if found else ' '
+        print(f'{mark} {domain}')
 
-asyncio.run(main())
+
+if __name__ == '__main__':
+    asyncio.run(main())

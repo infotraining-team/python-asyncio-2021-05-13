@@ -23,11 +23,13 @@ async def async_func(n):
 async def main():
     ## non-blocking
     tasks = asyncio.gather(async_func(1), async_func(2), async_func(3))
+    t1 = asyncio.create_task(async_func(4))
     ## block until finished
     print("waiting for tasks")
     await asyncio.sleep(0)
     print("after short wait")
     res = await tasks
+    await t1
     print(res)
 
 asyncio.run(main())
