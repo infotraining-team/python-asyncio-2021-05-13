@@ -12,6 +12,6 @@ async def echo_handler(reader, writer):
         writer.write(b'reply: ' + data)
         await writer.drain()
     print("conn closed")
-    await writer.wait_close()
+    await writer.wait_closed()
 
 asyncio.run(echo_server(("", 25000)))
