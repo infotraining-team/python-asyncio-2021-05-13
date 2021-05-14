@@ -16,15 +16,36 @@ def process_file(filename):
             counter += 1
     return counter
 
-async def main():
+async def process_file_async(filename):
+    counter = 0
+    async with AsyncFile(filename) as f:
+        async for _ in f:
+            counter += 1
+    return counter
+
+async def main_async():
+    tasks = []
+    async for f in get_python_filenames("."):
+        tasks.append(asyncio.create_task(process_file_async(f)))
+    res = await asyncio.gather(*tasks)
+    return sum(res)
+
+async def main_sync():
     counter = 0
     async for f in get_python_filenames("."):
         counter += process_file(f)
     return counter
 
 start = time.time()
-res = asyncio.run(main())
+res = asyncio.run(main_sync())
 end = time.time()
 
-print(f"time: {end-start}")
+print(f"sync time: {end-start}")
+print(f"res = {res}")
+
+start = time.time()
+res = asyncio.run(main_async())
+end = time.time()
+
+print(f"async time: {end-start}")
 print(f"res = {res}")

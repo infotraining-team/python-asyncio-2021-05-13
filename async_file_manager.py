@@ -5,7 +5,7 @@ class AsyncFile:
         self.filename = filename
 
     async def __aenter__(self):
-        self.file = await asyncio.to_thread(open, self.filename)
+        self.file = await asyncio.to_thread(open, self.filename, 'rU')
         return self
 
     async def __aexit__(self, ext, exc, tb):
@@ -15,8 +15,13 @@ class AsyncFile:
         return await asyncio.to_thread(self.file.read)
 
     async def __aiter__(self):
-        while line := await asyncio.to_thread(self.file.readline):
-            yield line
+        while True:
+            line = await asyncio.to_thread(self.file.readline)
+            if line:
+                line = line.encode('utf-8')
+                yield line
+            else:
+                break
 
 
 async def main():
