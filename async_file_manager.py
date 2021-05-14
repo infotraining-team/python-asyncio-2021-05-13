@@ -5,16 +5,21 @@ class AsyncFile:
         self.filename = filename
 
     async def __aenter__(self):
+        self.file = await asyncio.to_thread(open, self.filename)
         return self
 
     async def __aexit__(self, ext, exc, tb):
-        pass
+        await asyncio.to_thread(self.file.close)
 
     async def read(self):
-        return None
+        return await asyncio.to_thread(self.file.read)
+
+    async def __aiter__(self):
+        yield "ala"
 
 async def main():
-    async with AsyncFile("hello_async.py") as f:
+    cm = AsyncFile("hello_async.py") ## __init__
+    async with cm as f:              ## __aenter__
         content = await f.read()
     print(content)
 

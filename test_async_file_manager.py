@@ -27,3 +27,12 @@ async def test_AsyncFileCM_read_coro():
         async with AsyncFile("test_file") as f:
             data = await f.read()
             assert data == content
+
+@pytest.mark.asyncio
+async def test_AsyncFileCM_read_coro():
+    with mock.patch('builtins.open', mock.mock_open(read_data=content)):
+        got_lines = []
+        async with AsyncFile("test_file") as f:
+            async for line in f:
+                got_lines.append(line)
+            assert got_lines == lines
