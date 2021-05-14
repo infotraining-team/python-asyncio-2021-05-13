@@ -11,7 +11,7 @@ async def get_python_filenames(startdir):
 
 def process_file(filename):
     counter = 0
-    with open(filename) as f:
+    with open(filename, encoding="utf8") as f:
         for _ in f:
             counter += 1
     return counter
@@ -25,14 +25,14 @@ async def process_file_async(filename):
 
 async def main_async():
     tasks = []
-    async for f in get_python_filenames("."):
+    async for f in get_python_filenames("../workspace/#trainings/"):
         tasks.append(asyncio.create_task(process_file_async(f)))
     res = await asyncio.gather(*tasks)
     return sum(res)
 
 async def main_sync():
     counter = 0
-    async for f in get_python_filenames("."):
+    async for f in get_python_filenames("../workspace/#trainings/"):
         counter += process_file(f)
     return counter
 

@@ -5,7 +5,7 @@ class AsyncFile:
         self.filename = filename
 
     async def __aenter__(self):
-        self.file = await asyncio.to_thread(open, self.filename, 'rU')
+        self.file = await asyncio.to_thread(open, self.filename, encoding="utf8")
         return self
 
     async def __aexit__(self, ext, exc, tb):
@@ -18,7 +18,7 @@ class AsyncFile:
         while True:
             line = await asyncio.to_thread(self.file.readline)
             if line:
-                line = line.encode('utf-8')
+                #line = line.encode('utf-8')
                 yield line
             else:
                 break
