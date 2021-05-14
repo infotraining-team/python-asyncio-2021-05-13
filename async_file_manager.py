@@ -15,7 +15,9 @@ class AsyncFile:
         return await asyncio.to_thread(self.file.read)
 
     async def __aiter__(self):
-        yield "ala"
+        while line := await asyncio.to_thread(self.file.readline):
+            yield line
+
 
 async def main():
     cm = AsyncFile("hello_async.py") ## __init__

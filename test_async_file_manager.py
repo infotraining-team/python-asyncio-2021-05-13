@@ -22,14 +22,14 @@ async def test_AsyncFileCM_read_coro():
             assert asyncio.iscoroutinefunction(f.read)
 
 @pytest.mark.asyncio
-async def test_AsyncFileCM_read_coro():
+async def test_AsyncFileCM_read_content():
     with mock.patch('builtins.open', mock.mock_open(read_data=content)):
         async with AsyncFile("test_file") as f:
             data = await f.read()
             assert data == content
 
 @pytest.mark.asyncio
-async def test_AsyncFileCM_read_coro():
+async def test_AsyncFileCM_read_iter():
     with mock.patch('builtins.open', mock.mock_open(read_data=content)):
         got_lines = []
         async with AsyncFile("test_file") as f:
